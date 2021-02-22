@@ -83,6 +83,7 @@ public class AsyncTaskEngine extends Thread{
     public void pushEvent(JSONObject jsonObject){
         try {
             if (jsonObject != null && Objects.nonNull(jsonObject)){
+                //异步引擎
                 stringRedisTemplate.opsForList().leftPush(ASYNC_TASK_QUEUE_KEY, jsonObject.toJSONString());
             }
         }catch (Exception e){
