@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njust.mapper.CourseMapper">
+  <resultMap id="BaseResultMap" type="com.njust.domain.Course">
+
+    <id column="course_id" jdbcType="VARCHAR" property="courseId" />
+    <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+    <result column="course_year" jdbcType="VARCHAR" property="courseYear" />
+    <result column="course_teach" jdbcType="VARCHAR" property="courseTeach" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    course_id,course_name,course_year,course_teach,create_time,update_time,create_by,update_by
+  </sql>
+
+    <select id="getByMybatis" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from course
+
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from course where course_id =#{courseId}
+    </select>
+</mapper>

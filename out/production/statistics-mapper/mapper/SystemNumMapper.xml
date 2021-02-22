@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njust.mapper.SystemNumMapper">
+
+
+    <select id="selectUserCount" resultType="integer">
+        select count(1) from sys_user
+    </select>
+
+    <select id="selectNoticeTypeCount" resultType="integer">
+    select count(1)from sys_notice
+    </select>
+
+
+	<select id="selectLoginCount" resultType="integer">
+	select count(1) from sys_login_info
+    </select>
+
+    <select id="selectOperateCount" resultType="integer">
+    select count(1) from sys_oper_log
+    </select>
+      <select id="selectUserAction"  resultType="com.njust.utils.KeyValue">
+			SELECT login_time as name,COUNT(login_time) as value from
+		        (
+				  SELECT DATE_FORMAT(login_time,'%Y-%m-%d') as login_time from sys_login_info
+					WHERE  login_status=0  and  login_time  between  #{startTime}  and  #{endTime}
+				) a
+		GROUP BY login_time
+	</select>
+
+	<select id="selectOperateAction" resultType="com.njust.utils.KeyValue">
+        SELECT oper_time as name,COUNT(oper_time) as value from
+		        (
+				  SELECT DATE_FORMAT(oper_time,'%Y-%m-%d') as oper_time from sys_oper_log
+					WHERE  oper_time  between  #{startTime}  and  #{endTime}
+				) a
+		GROUP BY oper_time
+
+    </select>
+</mapper>

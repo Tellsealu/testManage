@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njust.mapper.ResourceNumMapper">
+
+
+    <select id="selectResourceCount" resultType="integer">
+        select count(1) from resource where deleted=0
+    </select>
+
+    <select id="selectResourceTypeCount" resultType="integer">
+    select count(1)from resource_type
+    </select>
+
+
+	<select id="selectDeleted" resultType="integer">
+	select count(1) from resource where deleted=1
+    </select>
+
+      <select id="selectMonthCount"  resultType="com.njust.utils.KeyValue">
+			SELECT create_time as name,COUNT(create_time) as value from
+		        (
+				  SELECT DATE_FORMAT(create_time,'%Y-%m-%d') as create_time from resource
+					WHERE  deleted=0  and  create_time  between  #{startTime}  and  #{endTime}
+				) a
+		GROUP BY create_time
+	</select>
+</mapper>

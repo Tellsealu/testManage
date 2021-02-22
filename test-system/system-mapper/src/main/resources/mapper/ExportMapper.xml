@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njust.mapper.ExportMapper">
+  <resultMap id="BaseResultMap" type="com.njust.domain.Export">
+
+    <id column="export_id" jdbcType="VARCHAR" property="expoerId" />
+    <result column="download_url" jdbcType="VARCHAR" property="downloadUrl" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="export_time" jdbcType="TIMESTAMP" property="exportTime" />
+  </resultMap>
+    <resultMap id="ExcelResultMap" type="com.njust.entity.QuestionEntity">
+    <result column="question_name" jdbcType="VARCHAR" property="questionName" />
+    <result column="question_score" jdbcType="INTEGER" property="questionScore" />
+    <result column="question_type_name" jdbcType="VARCHAR" property="questionTypeName" />
+    <result column="question_answer" jdbcType="VARCHAR" property="questionAnswer" />
+    <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+    <result column="question_description" jdbcType="VARCHAR" property="questionDescription" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    export_id,download_url,username,export_time
+  </sql>
+
+  <select id="selectAllQuestion" resultMap="ExcelResultMap">
+    SELECT
+        question_name,
+        question_score,
+        question_type_name,
+        question_answer,
+        course_name,
+        question_description
+    FROM
+        question AS qu
+        LEFT JOIN question_type AS q ON qu.question_type_id = q.question_type_id
+        LEFT JOIN course AS c ON qu.question_course_id = c.course_id
+    WHERE
+        deleted = 0
+    </select>
+
+    <select id="selectForJson" resultType="string">
+    select * from export
+</select>
+</mapper>

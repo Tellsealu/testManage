@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njust.mapper.QuestionMapper">
+  <resultMap id="BaseResultMap" type="com.njust.domain.Question">
+
+    <id column="question_id" jdbcType="VARCHAR" property="questionId" />
+    <result column="question_name" jdbcType="VARCHAR" property="questionName" />
+    <result column="question_score" jdbcType="INTEGER" property="questionScore" />
+    <result column="question_type_id" jdbcType="INTEGER" property="questionTypeId" />
+    <result column="question_answer" jdbcType="VARCHAR" property="questionAnswer" />
+    <result column="question_course_id" jdbcType="INTEGER" property="questionCourseId" />
+    <result column="question_description" jdbcType="VARCHAR" property="questionDescription" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+
+   <resultMap id="ExcelResultMap" type="com.njust.entity.QuestionEntity">
+    <result column="question_name" jdbcType="VARCHAR" property="questionName" />
+    <result column="question_score" jdbcType="INTEGER" property="questionScore" />
+    <result column="question_type_name" jdbcType="VARCHAR" property="questionTypeName" />
+    <result column="question_answer" jdbcType="VARCHAR" property="questionAnswer" />
+    <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+    <result column="question_description" jdbcType="VARCHAR" property="questionDescription" />
+  </resultMap>
+  <sql id="Base_Column_List">
+        question_id,question_name,question_score,question_type_id,question_answer,
+        question_course_id,question_description,deleted,create_time,update_time,create_by,update_by
+  </sql>
+    <update id="deletedById" parameterType="com.njust.domain.Question">
+    update question set
+    deleted=1
+    where question_id=#{value}
+    </update>
+
+    <select id="selectForExcel" resultMap="ExcelResultMap">
+    SELECT
+        question_name,
+        question_score,
+        question_type_name,
+        question_answer,
+        course_name,
+        question_description
+    FROM
+        question AS qu
+        LEFT JOIN question_type AS q ON qu.question_type_id = q.question_type_id
+        LEFT JOIN course AS c ON qu.question_course_id = c.course_id
+    WHERE
+        deleted = 0
+    </select>
+
+    <select id="exportByIds" resultMap="ExcelResultMap">
+    SELECT
+        question_name,
+        question_score,
+        question_type_name,
+        question_answer,
+        course_name,
+        question_description
+    FROM
+        question AS qu
+        LEFT JOIN question_type AS q ON qu.question_type_id = q.question_type_id
+        LEFT JOIN course AS c ON qu.question_course_id = c.course_id
+    WHERE
+        deleted = 0
+        AND qu.question_id IN
+        <foreach collection="list" item="question_id" index="index" open="(" close=")"
+        separator="," >
+        #{question_id}
+        </foreach>
+    </select>
+</mapper>
