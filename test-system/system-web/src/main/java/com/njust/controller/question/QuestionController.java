@@ -10,6 +10,7 @@ import com.njust.domain.Question;
 import com.njust.dto.ExportDto;
 import com.njust.dto.QuestionDto;
 import com.njust.entity.QuestionEntity;
+import com.njust.service.ExportService;
 import com.njust.service.QuestionService;
 import com.njust.service.ResourceService;
 import com.njust.utils.*;
@@ -62,6 +63,9 @@ public class QuestionController extends BaseController {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private ExportService exportService;
     /**
      * 分页查询
      */
@@ -265,6 +269,19 @@ public class QuestionController extends BaseController {
                 .sheet("0")
                 .doWrite(list);
     }
+
+    /*
+    * 查询所有导出文件
+    * */
+    @GetMapping("selectAllExport")
+    public AjaxResult selectAllExport(ExportDto exportDto){
+        DataGridView gridView = this.exportService.listQuestionPage(exportDto);
+        return AjaxResult.success("查询成功",gridView.getData(),gridView.getTotal());
+    }
+
+
+
+
     //输入流私有方法
     public InputStream getFileInputStream(String urlString) {
         InputStream is = null;

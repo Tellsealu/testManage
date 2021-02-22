@@ -60,5 +60,13 @@ public class ExportServiceImpl implements ExportService {
         return this.exportMapper.selectForJson();
     }
 
+    @Override
+    public DataGridView listQuestionPage(ExportDto exportDto) {
+        Page<Export> page=new Page<>(exportDto.getPageNum(),exportDto.getPageSize());
+        QueryWrapper<Export> qw=new QueryWrapper<>();
+        this.exportMapper.selectPage(page,qw);
+        return new DataGridView(page.getTotal(),page.getRecords());
+    }
+
 
 }

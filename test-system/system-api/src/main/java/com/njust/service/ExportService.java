@@ -46,4 +46,6 @@ public interface ExportService {
     List<QuestionEntity> exportAllQuestion(String exportId, String username);
 
     String selectForJson();
+
+    DataGridView listQuestionPage(ExportDto exportDto);
 }
