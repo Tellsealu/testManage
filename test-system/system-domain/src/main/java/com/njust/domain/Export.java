@@ -30,4 +30,12 @@ public class Export extends BaseEntity{
 
     @TableField("export_time")
     private Date exportTime;
+
+    @TableField("export_type")
+    private Integer exportType;
+
+    public static  final String COL_EXPORT_TYPE="export_type";
+
+    public static  final String COL_EXPORT_CREATETIME="export_time";
+
 }

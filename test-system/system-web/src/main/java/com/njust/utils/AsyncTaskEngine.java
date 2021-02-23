@@ -138,6 +138,7 @@ public class AsyncTaskEngine extends Thread{
                         export.setDownloadUrl(downloadUrl);
                         export.setUsername(username);
                         export.setExportTime(DateUtil.date());
+                        export.setExportType(0);
                         exportService.insertExport(export);
                         break;
 //                    case EXPORT_HOTLINE_NUMBER:

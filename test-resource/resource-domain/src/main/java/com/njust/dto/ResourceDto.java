@@ -74,4 +74,7 @@ public class ResourceDto extends BaseDto{
     private Integer deleted;
 
 
+    @TableField(value = "resource_course_id")
+    private Integer resourceCourseId;
+
 }

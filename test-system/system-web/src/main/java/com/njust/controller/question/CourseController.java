@@ -83,7 +83,7 @@ public class CourseController extends BaseController {
         return AjaxResult.toAjax(this.courseService.deleteCourseByIds(courseIds));
     }
     /**
-     * 查询所有课程
+     * 查询所有可用课程
      */
     @GetMapping("selectAllCourse")
     public AjaxResult selectAllCourse(){

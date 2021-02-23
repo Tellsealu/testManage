@@ -48,4 +48,6 @@ public interface ExportService {
     String selectForJson();
 
     DataGridView listQuestionPage(ExportDto exportDto);
+
+    List<Export> deleteAllExcel();
 }

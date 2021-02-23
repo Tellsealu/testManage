@@ -5,7 +5,9 @@ import com.alibaba.excel.ExcelReader;
 import com.alibaba.fastjson.JSONObject;
 import com.njust.aspectj.annotation.Log;
 import com.njust.aspectj.enums.BusinessType;
+import com.njust.config.upload.UploadService;
 import com.njust.controller.BaseController;
+import com.njust.domain.Export;
 import com.njust.domain.Question;
 import com.njust.dto.ExportDto;
 import com.njust.dto.QuestionDto;
@@ -66,6 +68,11 @@ public class QuestionController extends BaseController {
 
     @Autowired
     private ExportService exportService;
+
+    @Autowired
+    private UploadService uploadService;
+
+
     /**
      * 分页查询
      */
@@ -271,7 +278,7 @@ public class QuestionController extends BaseController {
     }
 
     /*
-    * 查询所有导出文件
+    * 查询所有关于问题的导出文件
     * */
     @GetMapping("selectAllExport")
     public AjaxResult selectAllExport(ExportDto exportDto){
@@ -279,7 +286,31 @@ public class QuestionController extends BaseController {
         return AjaxResult.success("查询成功",gridView.getData(),gridView.getTotal());
     }
 
+    /*
+    * 清空所有导出的问题
+    * */
+    @GetMapping("deleteAllExport")
+    public AjaxResult deleteAllExport( ){
+        List<Export>list=this.exportService.deleteAllExcel();
+        StringBuilder stringBuilder=new StringBuilder();
 
+        if (null!=list&&list.size()>0) {
+            for (Export e : list) {
+                String url = e.getDownloadUrl();
+                String []array=url.split("/",4);
+                String fullPath=array[3];
+                stringBuilder.append(e.getExpoerId()+",");
+                this.uploadService.deleteFile(fullPath);
+            }
+            String idString = stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
+            String []ids=idString.split(",");
+            this.exportService.deleteExportByIds(ids);
+
+        }else {
+            return new AjaxResult(201,"删除错误,没有要删除的文件");
+        }
+        return new AjaxResult(200,"删除成功");
+    }
 
 
     //输入流私有方法

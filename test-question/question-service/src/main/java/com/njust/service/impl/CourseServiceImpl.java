@@ -33,6 +33,7 @@ public class CourseServiceImpl implements CourseService {
         QueryWrapper<Course> qw=new QueryWrapper<>();
         qw.like(StringUtils.isNotBlank(courseDto.getCourseName()), Course.COL_COURSE_NAME, courseDto.getCourseName());
         qw.like(StringUtils.isNotBlank(courseDto.getCourseTeach()), Course.COL_COURSE_TEACH, courseDto.getCourseTeach());
+        qw.eq(null!= courseDto.getStatus(),Course.COL_STATUS,courseDto.getStatus());
         qw.ge(null!= courseDto.getBeginTime(), Course.COL_CREATE_TIME, courseDto.getBeginTime());
         qw.le(null!= courseDto.getEndTime(), Course.COL_CREATE_TIME, courseDto.getEndTime());
         qw.orderByAsc(Course.COL_CREATE_TIME);
@@ -71,6 +72,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> selectAllCourse() {
         QueryWrapper<Course> qw=new QueryWrapper<>();
+        qw.eq(Course.COL_STATUS,0);
         return this.courseMapper.selectList(qw);
     }
 }
