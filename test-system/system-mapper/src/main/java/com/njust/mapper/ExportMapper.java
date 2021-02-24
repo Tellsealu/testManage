@@ -15,4 +15,6 @@ public interface ExportMapper extends BaseMapper<Export> {
     List<QuestionEntity> selectAllQuestion();
 
     String selectForJson();
+
+    List<Export> selectAllQuestionDelete();
 }

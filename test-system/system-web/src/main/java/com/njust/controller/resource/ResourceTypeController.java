@@ -4,6 +4,7 @@ import com.njust.aspectj.annotation.Log;
 import com.njust.aspectj.enums.BusinessType;
 import com.njust.controller.BaseController;
 import com.njust.dto.ResourceTypeDto;
+import com.njust.service.ResourceService;
 import com.njust.service.ResourceTypeService;
 import com.njust.utils.ShiroSecurityUtils;
 import com.njust.vo.AjaxResult;
@@ -26,6 +27,9 @@ public class ResourceTypeController extends BaseController {
 
     @Reference
     private ResourceTypeService resourceTypeService;
+
+    @Reference
+    private ResourceService resourceService;
 
 
     /**
@@ -71,7 +75,20 @@ public class ResourceTypeController extends BaseController {
     @DeleteMapping("deleteResourceTypeByIds/{resourceTypeIds}")
     @Log(title = "删除试题",businessType = BusinessType.DELETE)
     public AjaxResult deleteResourceTypeByIds(@PathVariable @Validated @NotEmpty(message = "要删除的ID不能为空") Long[] resourceTypeIds) {
-        return AjaxResult.toAjax(this.resourceTypeService.deleteResourceTypeByIds(resourceTypeIds));
+        Integer resourceCount;
+        Boolean count = false;
+        for (int i = 0; i < resourceTypeIds.length; i++) {
+            resourceCount = this.resourceService.seleceResourceCount(resourceTypeIds[i]);
+            if (resourceCount != 0) {
+                count = true;
+                break;
+            }
+        }
+        if (count) {
+            return new AjaxResult(201, "类型已绑定资源，无法删除");
+        } else {
+            return AjaxResult.toAjax(this.resourceTypeService.deleteResourceTypeByIds(resourceTypeIds));
+        }
     }
     /**
      * 查询所有类型

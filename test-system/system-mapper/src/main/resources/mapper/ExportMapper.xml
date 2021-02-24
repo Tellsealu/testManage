@@ -7,6 +7,7 @@
     <result column="download_url" jdbcType="VARCHAR" property="downloadUrl" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="export_time" jdbcType="TIMESTAMP" property="exportTime" />
+    <result column="export_type" jdbcType="INTEGER" property="exportType"/>
   </resultMap>
     <resultMap id="ExcelResultMap" type="com.njust.entity.QuestionEntity">
     <result column="question_name" jdbcType="VARCHAR" property="questionName" />
@@ -17,7 +18,7 @@
     <result column="question_description" jdbcType="VARCHAR" property="questionDescription" />
   </resultMap>
   <sql id="Base_Column_List">
-    export_id,download_url,username,export_time
+    export_id,download_url,username,export_type,export_time
   </sql>
 
   <select id="selectAllQuestion" resultMap="ExcelResultMap">
@@ -38,5 +39,14 @@
 
     <select id="selectForJson" resultType="string">
     select * from export
-</select>
+    </select>
+
+    <select id="selectAllQuestionDelete" resultMap="BaseResultMap">
+    SELECT
+        *
+    FROM
+        export
+    WHERE
+        export_type = 0
+    </select>
 </mapper>

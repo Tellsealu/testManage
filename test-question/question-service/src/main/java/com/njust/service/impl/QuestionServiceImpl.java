@@ -132,5 +132,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     }
 
+    @Override
+    public Integer seleceQuestionCount(Long courseId) {
+        return this.questionMapper.seleceQuestionCount(courseId);
+    }
+
+    @Override
+    public Integer seleceQuestionTypeCount(Long questionTypeId) {
+        return this.questionMapper.seleceQuestionTypeCount(questionTypeId);
+    }
+
 }
 

@@ -1,6 +1,7 @@
 package com.njust.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.njust.dto.BaseDto;
@@ -33,14 +34,14 @@ public class CourseDto extends BaseDto {
     /**
      * 课程名称
      */
-    @TableId(value = "course_name", type = IdType.INPUT)
+    @TableId(value = "course_name")
     @ApiModelProperty(value="课程名称")
     private String courseName;
 
     /**
      * 授课年度
      */
-    @TableId(value = "course_year", type = IdType.INPUT)
+    @TableId(value = "course_year")
     @ApiModelProperty(value="课程年度")
     private String courseYear;
 
@@ -48,9 +49,12 @@ public class CourseDto extends BaseDto {
     /**
      * 课程名称
      */
-    @TableId(value = "course_name", type = IdType.INPUT)
+    @TableId(value = "course_name")
     @ApiModelProperty(value="授课老师")
     private String courseTeach;
 
-
+    /*
+     * 状态*/
+    @TableField(value = "status")
+    private Integer status;
 }

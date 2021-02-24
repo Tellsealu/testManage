@@ -8,6 +8,8 @@ import com.njust.controller.BaseController;
 import com.njust.domain.Course;
 import com.njust.domain.CourseDto;
 import com.njust.service.CourseService;
+import com.njust.service.QuestionService;
+import com.njust.service.ResourceService;
 import com.njust.utils.ShiroSecurityUtils;
 import com.njust.vo.AjaxResult;
 import com.njust.vo.DataGridView;
@@ -31,6 +33,11 @@ public class CourseController extends BaseController {
     @Reference
     private CourseService courseService;
 
+    @Reference
+    private QuestionService questionService;
+
+    @Reference
+    private ResourceService resourceService;
 
     /**
      * 分页查询
@@ -56,7 +63,7 @@ public class CourseController extends BaseController {
     }
 
     /**
-     * 修改
+     * 修改课程
      */
     @PutMapping("updateCourse")
     @Log(title = "修改课程",businessType = BusinessType.UPDATE)
@@ -80,10 +87,25 @@ public class CourseController extends BaseController {
     @DeleteMapping("deleteCourseByIds/{courseIds}")
     @Log(title = "删除课程",businessType = BusinessType.DELETE)
     public AjaxResult deleteCourseByIds(@PathVariable @Validated @NotEmpty(message = "要删除的ID不能为空") Long[] courseIds) {
-        return AjaxResult.toAjax(this.courseService.deleteCourseByIds(courseIds));
+        Integer questionCount;
+        Integer resourceCount;
+        Boolean count = false;
+        for (int i = 0; i < courseIds.length; i++) {
+            questionCount = this.questionService.seleceQuestionCount(courseIds[i]);
+            resourceCount = this.resourceService.selectResourceCount(courseIds[i]);
+            if (questionCount != 0 || resourceCount != 0) {
+                count = true;
+                break;
+            }
+        }
+        if (count) {
+            return new AjaxResult(201, "课程已绑定试题或者资源，无法删除");
+        } else {
+            return AjaxResult.toAjax(this.courseService.deleteCourseByIds(courseIds));
+        }
     }
     /**
-     * 查询所有课程
+     * 查询所有可用课程
      */
     @GetMapping("selectAllCourse")
     public AjaxResult selectAllCourse(){

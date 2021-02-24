@@ -81,7 +81,7 @@ public class LoginController {
             loginInfo.setUserName(ShiroSecurityUtils.getCurrentUserName());
         } catch (Exception e) {
             log.error("用户名或密码不正确", e);
-            ajax = AjaxResult.error(HttpStatus.ERROR, "用户名或密码不正确");
+            ajax = AjaxResult.error(HttpStatus.ERROR, "检查用户登录信息或者用户状态");
             loginInfo.setMsg("用户名或密码不正确");
             loginInfo.setLoginStatus(Constants.LOGIN_ERROR);
         }

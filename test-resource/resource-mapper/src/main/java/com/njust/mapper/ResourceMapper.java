@@ -15,4 +15,9 @@ public interface ResourceMapper extends BaseMapper<Resource> {
     String selectByName(String fileName);
 
     String selectByUserExcelName(String fileName);
+
+    Integer selectResourceCount(Long courseId);
+
+
+    Integer seleceResourceTypeCount(Long resourceTypeId);
 }

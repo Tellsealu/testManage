@@ -5,7 +5,9 @@ import com.alibaba.excel.ExcelReader;
 import com.alibaba.fastjson.JSONObject;
 import com.njust.aspectj.annotation.Log;
 import com.njust.aspectj.enums.BusinessType;
+import com.njust.config.upload.UploadService;
 import com.njust.controller.BaseController;
+import com.njust.domain.Export;
 import com.njust.domain.Question;
 import com.njust.dto.ExportDto;
 import com.njust.dto.QuestionDto;
@@ -66,9 +68,15 @@ public class QuestionController extends BaseController {
 
     @Autowired
     private ExportService exportService;
+
+    @Autowired
+    private UploadService uploadService;
+
+
     /**
      * 分页查询
      */
+
     @GetMapping("listQuestionForPage")
     public AjaxResult listQuestionForPage(QuestionDto questionDto){
         DataGridView gridView = this.questionService.listQuestionPage(questionDto);
@@ -210,36 +218,39 @@ public class QuestionController extends BaseController {
     /*
     * 下载试题模板
     * */
-    @GetMapping(value = "/downloadExcelModel")
-    public ResponseEntity<byte[]> download(HttpServletRequest response) throws Exception{
+    @GetMapping(value = "/downloadExcelModel/{modelName}")
+    public ResponseEntity<byte[]> download(@PathVariable @Validated @NotEmpty(message ="模板名字不能为空") String modelName,HttpServletRequest response) throws Exception{
 
-        String fileName="导入试题模板";
-        String modelUrl=this.resourceService.selectByQuestionExcelName(fileName);
+        String modelUrl=this.resourceService.selectByQuestionExcelName(modelName);
 
-        HttpHeaders headers = new HttpHeaders();
-        //处理IE
-        String userAgent = response.getHeader("user-agent").toLowerCase();
+        if (modelUrl!=null) {
+            HttpHeaders headers = new HttpHeaders();
+            //处理IE
+            String userAgent = response.getHeader("user-agent").toLowerCase();
 
-        if (userAgent.contains("msie") || userAgent.contains("like gecko")  ||
-                userAgent.contains("Trident")) {
-            // win10 ie edge 浏览器 和其他系统的ie
-            fileName = URLEncoder.encode(fileName, "UTF-8");
-            //解决下载时，空格变加号
-            fileName = org.apache.commons.lang3.StringUtils.replace(fileName, "+", "%20");
-        } else {
-            // fe
-            fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+            if (userAgent.contains("msie") || userAgent.contains("like gecko") ||
+                    userAgent.contains("Trident")) {
+                // win10 ie edge 浏览器 和其他系统的ie
+                modelName = URLEncoder.encode(modelName, "UTF-8");
+                //解决下载时，空格变加号
+                modelName = org.apache.commons.lang3.StringUtils.replace(modelName, "+", "%20");
+            } else {
+                // fe
+                modelName = new String(modelName.getBytes("UTF-8"), "ISO8859-1");
 
-            //解决下载时，空格变加号
-            fileName = org.apache.commons.lang3.StringUtils.replace(fileName, "+", "%20");
+                //解决下载时，空格变加号
+                modelName = org.apache.commons.lang3.StringUtils.replace(modelName, "+", "%20");
+            }
+
+            //通知浏览器以attachment（下载方式）打开图片
+            headers.setContentDispositionFormData("attachment", modelName); //解决原始文件名中有中文出现乱码);
+            //application/octet-stream ： 二进制流数据（最常见的文件下载）。
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(IOUtils.toByteArray(getFileInputStream(modelUrl)),
+                    headers, HttpStatus.CREATED);
+        }else {
+            return null;
         }
-
-        //通知浏览器以attachment（下载方式）打开图片
-        headers.setContentDispositionFormData("attachment",fileName); //解决原始文件名中有中文出现乱码);
-        //application/octet-stream ： 二进制流数据（最常见的文件下载）。
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(IOUtils.toByteArray(getFileInputStream(modelUrl)),
-                headers, HttpStatus.CREATED);
 
     }
     /*
@@ -271,7 +282,7 @@ public class QuestionController extends BaseController {
     }
 
     /*
-    * 查询所有导出文件
+    * 查询所有关于问题的导出文件
     * */
     @GetMapping("selectAllExport")
     public AjaxResult selectAllExport(ExportDto exportDto){
@@ -279,7 +290,31 @@ public class QuestionController extends BaseController {
         return AjaxResult.success("查询成功",gridView.getData(),gridView.getTotal());
     }
 
+    /*
+    * 清空所有导出的问题
+    * */
+    @GetMapping("deleteAllExport")
+    public AjaxResult deleteAllExport( ){
+        List<Export>list=this.exportService.deleteAllExcel();
+        StringBuilder stringBuilder=new StringBuilder();
 
+        if (null!=list&&list.size()>0) {
+            for (Export e : list) {
+                String url = e.getDownloadUrl();
+                String []array=url.split("/",4);
+                String fullPath=array[3];
+                stringBuilder.append(e.getExpoerId()+",");
+                this.uploadService.deleteFile(fullPath);
+            }
+            String idString = stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
+            String []ids=idString.split(",");
+            this.exportService.deleteExportByIds(ids);
+
+        }else {
+            return new AjaxResult(201,"删除错误,没有要删除的文件");
+        }
+        return new AjaxResult(200,"删除成功");
+    }
 
 
     //输入流私有方法

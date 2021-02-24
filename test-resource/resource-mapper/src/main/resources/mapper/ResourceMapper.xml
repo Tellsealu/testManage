@@ -13,10 +13,11 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="resource_course_id" jdbcType="INTEGER" property="resourceCourseId"/>
   </resultMap>
   <sql id="Base_Column_List">
         resource_id,resource_name,resource_type_id,resource_content,resource_remark,
-        deleted,create_time,update_time,create_by,update_by
+        deleted,create_time,update_time,create_by,update_by,resource_course_id
   </sql>
 
     <update id="deletedById" parameterType="com.njust.domain.Resource">
@@ -30,5 +31,25 @@
     </select>
     <select id="selectByUserExcelName" resultType="string">
     select url from resource where deleted=0 and resource_name=#{fileName}
+    </select>
+
+    <select id="selectResourceCount" resultType="integer">
+    SELECT
+        count( 1 )
+    FROM
+        resource
+    WHERE
+        resource_course_id = #{courseId}
+        AND deleted = 0
+    </select>
+
+    <select id="seleceResourceTypeCount" resultType="integer">
+        SELECT
+            count( 1 )
+        FROM
+            resource
+        WHERE
+            resource_type_id = #{resourceTypeId}
+            AND deleted = 0
     </select>
 </mapper>

@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
     public User queryUserByPhone(String phone) {
         QueryWrapper<User> qw=new QueryWrapper<>();
         qw.eq(User.COL_PHONE,phone);
+        qw.eq(User.COL_STATUS,0);
         User user = this.userMapper.selectOne(qw);
         return user;
     }

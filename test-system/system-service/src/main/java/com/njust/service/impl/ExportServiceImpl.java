@@ -11,6 +11,7 @@ import com.njust.vo.DataGridView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +24,6 @@ public class ExportServiceImpl implements ExportService {
 
     @Autowired
     private ExportMapper exportMapper;
-
 
 
     @Override
@@ -41,6 +41,12 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public int deleteExportByIds(String[] exportIds) {
+        if (exportIds.length>0) {
+            List<String> list = Arrays.asList(exportIds);
+            for (String id : list) {
+                this.exportMapper.deleteById(id);
+            }
+        }
         return 0;
     }
 
@@ -64,8 +70,17 @@ public class ExportServiceImpl implements ExportService {
     public DataGridView listQuestionPage(ExportDto exportDto) {
         Page<Export> page=new Page<>(exportDto.getPageNum(),exportDto.getPageSize());
         QueryWrapper<Export> qw=new QueryWrapper<>();
+        exportDto.setExportType(0);
+        qw.eq(null!=exportDto.getExportType(),Export.COL_EXPORT_TYPE,exportDto.getExportType());
+        qw.orderByDesc(Export.COL_EXPORT_CREATETIME);
         this.exportMapper.selectPage(page,qw);
         return new DataGridView(page.getTotal(),page.getRecords());
+    }
+
+    @Override
+    public List<Export> deleteAllExcel() {
+        List<Export>deleteList=exportMapper.selectAllQuestionDelete();
+        return deleteList;
     }
 
 

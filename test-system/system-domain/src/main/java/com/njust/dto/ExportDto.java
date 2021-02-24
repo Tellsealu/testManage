@@ -26,4 +26,7 @@ public class ExportDto extends BaseDto {
 
     @TableField("export_time")
     private String exportTime;
+
+    @TableField("export_type")
+    private Integer exportType;
 }

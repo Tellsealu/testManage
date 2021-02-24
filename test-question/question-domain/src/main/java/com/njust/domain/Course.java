@@ -83,6 +83,11 @@ public class Course implements Serializable {
     @ApiModelProperty(value="更新者")
     private String updateBy;
 
+    /*
+    * 状态*/
+    @TableField(value = "status")
+    private Integer status;
+
     public static final String COL_COURSE_ID = "course_id";
 
     public static final String COL_COURSE_NAME = "course_name";
@@ -98,5 +103,7 @@ public class Course implements Serializable {
     public static final String COL_CREATE_BY = "create_by";
 
     public static final String COL_UPDATE_BY = "update_by";
+
+    public static final String COL_STATUS= "status";
 
 }

@@ -63,4 +63,8 @@ public interface QuestionService {
     Integer selectDeleted();
 
     void exportAll(String exportId, String username);
+
+    Integer seleceQuestionCount(Long courseId);
+
+    Integer seleceQuestionTypeCount(Long questionTypeId);
 }

@@ -106,7 +106,10 @@ public class Resource implements Serializable {
     @ApiModelProperty(value="更新者")
     private String updateBy;
 
+    @TableField(value = "resource_course_id")
+    private Integer resourceCourseId;
 
+    public static final String COL_RESOURCE_COURSE_ID="resource_course_id";
 
     public static final String COL_RESOURCE_ID = "resource_id";
 

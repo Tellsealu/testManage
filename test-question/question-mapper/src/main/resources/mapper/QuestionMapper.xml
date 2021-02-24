@@ -15,6 +15,8 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="question_level" jdbcType="VARCHAR" property="questionLevel"/>
+    <result column="question_img" jdbcType="VARCHAR" property="questionImg"/>
   </resultMap>
 
    <resultMap id="ExcelResultMap" type="com.njust.entity.QuestionEntity">
@@ -24,6 +26,8 @@
     <result column="question_answer" jdbcType="VARCHAR" property="questionAnswer" />
     <result column="course_name" jdbcType="VARCHAR" property="courseName" />
     <result column="question_description" jdbcType="VARCHAR" property="questionDescription" />
+    <result column="question_level" jdbcType="VARCHAR" property="questionLevel"/>
+    <result column="question_img" jdbcType="VARCHAR" property="questionImg"/>
   </resultMap>
   <sql id="Base_Column_List">
         question_id,question_name,question_score,question_type_id,question_answer,
@@ -42,7 +46,9 @@
         question_type_name,
         question_answer,
         course_name,
-        question_description
+        question_description,
+        question_img,
+        question_level
     FROM
         question AS qu
         LEFT JOIN question_type AS q ON qu.question_type_id = q.question_type_id
@@ -58,7 +64,10 @@
         question_type_name,
         question_answer,
         course_name,
-        question_description
+        question_description,
+        question_img,
+        question_level
+
     FROM
         question AS qu
         LEFT JOIN question_type AS q ON qu.question_type_id = q.question_type_id
@@ -70,5 +79,25 @@
         separator="," >
         #{question_id}
         </foreach>
+    </select>
+
+    <select id="seleceQuestionCount" resultType="integer">
+        SELECT
+            count( 1 )
+        FROM
+            question
+        WHERE
+            question_course_id = #{courseId}
+            AND deleted = 0
+    </select>
+
+    <select id="seleceQuestionTypeCount" resultType="integer">
+        SELECT
+            count( 1 )
+        FROM
+            question
+        WHERE
+            question_type_id = #{questionTypeId}
+            AND deleted = 0
     </select>
 </mapper>
