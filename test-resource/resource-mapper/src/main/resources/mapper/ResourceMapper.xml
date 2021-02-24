@@ -32,4 +32,24 @@
     <select id="selectByUserExcelName" resultType="string">
     select url from resource where deleted=0 and resource_name=#{fileName}
     </select>
+
+    <select id="selectResourceCount" resultType="integer">
+    SELECT
+        count( 1 )
+    FROM
+        resource
+    WHERE
+        resource_course_id = #{courseId}
+        AND deleted = 0
+    </select>
+
+    <select id="seleceResourceTypeCount" resultType="integer">
+        SELECT
+            count( 1 )
+        FROM
+            resource
+        WHERE
+            resource_type_id = #{resourceTypeId}
+            AND deleted = 0
+    </select>
 </mapper>

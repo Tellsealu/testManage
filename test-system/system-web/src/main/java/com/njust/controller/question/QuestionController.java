@@ -76,6 +76,7 @@ public class QuestionController extends BaseController {
     /**
      * 分页查询
      */
+
     @GetMapping("listQuestionForPage")
     public AjaxResult listQuestionForPage(QuestionDto questionDto){
         DataGridView gridView = this.questionService.listQuestionPage(questionDto);
@@ -217,36 +218,39 @@ public class QuestionController extends BaseController {
     /*
     * 下载试题模板
     * */
-    @GetMapping(value = "/downloadExcelModel")
-    public ResponseEntity<byte[]> download(HttpServletRequest response) throws Exception{
+    @GetMapping(value = "/downloadExcelModel/{modelName}")
+    public ResponseEntity<byte[]> download(@PathVariable @Validated @NotEmpty(message ="模板名字不能为空") String modelName,HttpServletRequest response) throws Exception{
 
-        String fileName="导入试题模板";
-        String modelUrl=this.resourceService.selectByQuestionExcelName(fileName);
+        String modelUrl=this.resourceService.selectByQuestionExcelName(modelName);
 
-        HttpHeaders headers = new HttpHeaders();
-        //处理IE
-        String userAgent = response.getHeader("user-agent").toLowerCase();
+        if (modelUrl!=null) {
+            HttpHeaders headers = new HttpHeaders();
+            //处理IE
+            String userAgent = response.getHeader("user-agent").toLowerCase();
 
-        if (userAgent.contains("msie") || userAgent.contains("like gecko")  ||
-                userAgent.contains("Trident")) {
-            // win10 ie edge 浏览器 和其他系统的ie
-            fileName = URLEncoder.encode(fileName, "UTF-8");
-            //解决下载时，空格变加号
-            fileName = org.apache.commons.lang3.StringUtils.replace(fileName, "+", "%20");
-        } else {
-            // fe
-            fileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+            if (userAgent.contains("msie") || userAgent.contains("like gecko") ||
+                    userAgent.contains("Trident")) {
+                // win10 ie edge 浏览器 和其他系统的ie
+                modelName = URLEncoder.encode(modelName, "UTF-8");
+                //解决下载时，空格变加号
+                modelName = org.apache.commons.lang3.StringUtils.replace(modelName, "+", "%20");
+            } else {
+                // fe
+                modelName = new String(modelName.getBytes("UTF-8"), "ISO8859-1");
 
-            //解决下载时，空格变加号
-            fileName = org.apache.commons.lang3.StringUtils.replace(fileName, "+", "%20");
+                //解决下载时，空格变加号
+                modelName = org.apache.commons.lang3.StringUtils.replace(modelName, "+", "%20");
+            }
+
+            //通知浏览器以attachment（下载方式）打开图片
+            headers.setContentDispositionFormData("attachment", modelName); //解决原始文件名中有中文出现乱码);
+            //application/octet-stream ： 二进制流数据（最常见的文件下载）。
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(IOUtils.toByteArray(getFileInputStream(modelUrl)),
+                    headers, HttpStatus.CREATED);
+        }else {
+            return null;
         }
-
-        //通知浏览器以attachment（下载方式）打开图片
-        headers.setContentDispositionFormData("attachment",fileName); //解决原始文件名中有中文出现乱码);
-        //application/octet-stream ： 二进制流数据（最常见的文件下载）。
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(IOUtils.toByteArray(getFileInputStream(modelUrl)),
-                headers, HttpStatus.CREATED);
 
     }
     /*

@@ -19,4 +19,8 @@ public interface QuestionMapper extends BaseMapper<Question> {
     List<QuestionEntity> selectForExcel();
 
     List<QuestionEntity> exportByIds(List<String> list);
+
+    Integer seleceQuestionCount(Long courseId);
+
+    Integer seleceQuestionTypeCount(Long questionTypeId);
 }

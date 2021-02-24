@@ -41,11 +41,12 @@ public class ResourceServiceImpl implements ResourceService {
 
         qw.eq(resourceDto.getResourceTypeId()!=null,Resource.COL_RESOURCE_TYPE_ID,resourceDto.getResourceTypeId());
         qw.eq(Resource.COL_RESOURCE_DELETED,resourceDto.getDeleted());
+        qw.eq(resourceDto.getResourceCourseId()!=null,Resource.COL_RESOURCE_COURSE_ID,resourceDto.getResourceCourseId());
 
         qw.ge(null!= resourceDto.getBeginTime(), Resource.COL_CREATE_TIME, resourceDto.getBeginTime());
         qw.le(null!= resourceDto.getEndTime(), Resource.COL_CREATE_TIME, resourceDto.getEndTime());
 
-        qw.orderByAsc(Resource.COL_CREATE_TIME);
+        qw.orderByDesc(Resource.COL_CREATE_TIME);
 
         this.resourceMapper.selectPage(page,qw);
         return new DataGridView(page.getTotal(), page.getRecords());    }
@@ -105,6 +106,16 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public String selectByQuestionExcelName(String fileName) {
         return this.resourceMapper.selectByName(fileName);
+    }
+
+    @Override
+    public Integer selectResourceCount(Long courseId) {
+        return this.resourceMapper.selectResourceCount(courseId);
+    }
+
+    @Override
+    public Integer seleceResourceCount(Long resourceTypeId) {
+        return this.resourceMapper.seleceResourceTypeCount(resourceTypeId);
     }
 
 }

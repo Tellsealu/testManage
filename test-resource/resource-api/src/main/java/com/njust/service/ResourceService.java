@@ -55,4 +55,8 @@ public interface ResourceService {
     String selectByUserExcelName(String fileName);
 
     String selectByQuestionExcelName(String fileName);
+
+    Integer selectResourceCount(Long courseId);
+
+    Integer seleceResourceCount(Long resourceTypeId);
 }

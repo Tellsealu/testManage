@@ -80,4 +80,24 @@
         #{question_id}
         </foreach>
     </select>
+
+    <select id="seleceQuestionCount" resultType="integer">
+        SELECT
+            count( 1 )
+        FROM
+            question
+        WHERE
+            question_course_id = #{courseId}
+            AND deleted = 0
+    </select>
+
+    <select id="seleceQuestionTypeCount" resultType="integer">
+        SELECT
+            count( 1 )
+        FROM
+            question
+        WHERE
+            question_type_id = #{questionTypeId}
+            AND deleted = 0
+    </select>
 </mapper>
